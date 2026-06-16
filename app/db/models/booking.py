@@ -1,22 +1,15 @@
 from datetime import datetime
-import enum
 from uuid import UUID, uuid7
 
 from sqlalchemy import DateTime, Enum, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
-
-
-class BookingStatus(enum.Enum):
-    PENDING = "pending"
-    CONFIRMED = "confirmed"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
+from app.domain import BookingStatus
 
 
 class Booking(Base):
-    __tablename__ = "bookings"
+    __tablename__ = "Bookings"
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid7)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -25,10 +18,13 @@ class Booking(Base):
     )
     service_type: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[BookingStatus] = mapped_column(
-        Enum(BookingStatus),
+        Enum(
+            BookingStatus,
+            name="bookingstatus",
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
         default=BookingStatus.PENDING,
         nullable=False,
-        index=True,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
