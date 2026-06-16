@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 from tests.helpers import set_booking_status
 
-from app.domain import BookingStatus
+from app.domain.enums import BookingStatus
 
 
 class TestCreateBooking:
@@ -82,6 +82,44 @@ class TestGetBooking:
         response = await client.get("/bookings/not-a-uuid")
 
         assert response.status_code == 422
+
+
+class TestCancelBooking:
+    async def test_cancel_pending_booking(
+        self,
+        client: AsyncClient,
+        created_booking: dict,
+    ) -> None:
+        response = await client.delete(f"/bookings/{created_booking['id']}")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["id"] == created_booking["id"]
+        assert data["status"] == BookingStatus.CANCELLED.value
+
+    async def test_cancel_booking_not_found(self, client: AsyncClient) -> None:
+        response = await client.delete(
+            "/bookings/00000000-0000-0000-0000-000000000000",
+        )
+
+        assert response.status_code == 404
+
+    @pytest.mark.parametrize(
+        "booking_status",
+        [BookingStatus.CONFIRMED, BookingStatus.FAILED, BookingStatus.CANCELLED],
+    )
+    async def test_cancel_rejects_non_pending_statuses(
+        self,
+        client: AsyncClient,
+        db_session: AsyncSession,
+        created_booking: dict,
+        booking_status: BookingStatus,
+    ) -> None:
+        await set_booking_status(db_session, created_booking["id"], booking_status)
+
+        response = await client.delete(f"/bookings/{created_booking['id']}")
+
+        assert response.status_code == 404
 
 
 class TestListBookings:

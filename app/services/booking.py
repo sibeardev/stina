@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Booking
-from app.domain import BookingStatus
+from app.domain.enums import BookingStatus
 from app.repositories import BookingRepository
 from app.schemas import BookingCreateRequest, BookingListResponse, BookingResponse
 
@@ -20,6 +20,14 @@ class BookingService:
         booking = await self._repository.get_by_id(booking_id)
         if booking:
             return booking.status
+
+    async def cancel_booking(self, booking_id: UUID) -> Booking:
+        booking = await self._repository.get_by_id(booking_id)
+        if not booking:
+            raise ValueError("Booking not found")
+        if booking.status != BookingStatus.PENDING:
+            raise ValueError("Booking is not pending")
+        return await self._repository.cancel(booking)
 
     async def list_bookings(
         self,

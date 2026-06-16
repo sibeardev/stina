@@ -4,7 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Booking
-from app.domain import BookingStatus
+from app.domain.enums import BookingStatus
 from app.schemas import BookingCreateRequest
 
 
@@ -46,3 +46,9 @@ class BookingRepository:
         )
         result = await self.db.execute(stmt)
         return list(result.scalars().all()), total
+
+    async def cancel(self, booking: Booking) -> Booking:
+        booking.status = BookingStatus.CANCELLED
+        await self.db.flush()
+        await self.db.refresh(booking)
+        return booking

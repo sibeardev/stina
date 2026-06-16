@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Query, status
 
 from app.api.deps import BookingServiceDep
-from app.domain import BookingStatus
+from app.domain.enums import BookingStatus
 from app.schemas import BookingCreateRequest, BookingListResponse, BookingResponse
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -44,3 +44,19 @@ async def get_booking_status(
             detail="Booking not found",
         )
     return booking_status
+
+
+@router.delete("/{booking_id}", response_model=BookingResponse)
+async def cancel_booking(
+    booking_id: UUID,
+    service: BookingServiceDep,
+) -> BookingResponse:
+    try:
+        booking = await service.cancel_booking(booking_id)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        ) from e
+
+    return BookingResponse.model_validate(booking)
