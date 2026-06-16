@@ -1,4 +1,4 @@
-"""create bookings table
+"""create Bookings table
 
 Revision ID: a002815a74c3
 Revises:
@@ -33,7 +33,7 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=255), nullable=False),
         sa.Column("datetime", sa.DateTime(timezone=True), nullable=False),
         sa.Column("service_type", sa.String(length=255), nullable=False),
-        sa.Column("status", booking_status_enum, nullable=False),
+        sa.Column("status", booking_status_enum, default="pending", nullable=False),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -42,12 +42,12 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_bookings_datetime"), "Bookings", ["datetime"], unique=False)
-    op.create_index(op.f("ix_bookings_status"), "Bookings", ["status"], unique=False)
+    op.create_index(op.f("ix_Bookings_datetime"), "Bookings", ["datetime"], unique=False)
+    op.create_index(op.f("ix_Bookings_status"), "Bookings", ["status"], unique=False)
 
 
 def downgrade() -> None:
-    op.drop_index(op.f("ix_bookings_status"), table_name="Bookings")
-    op.drop_index(op.f("ix_bookings_datetime"), table_name="Bookings")
+    op.drop_index(op.f("ix_Bookings_status"), table_name="Bookings")
+    op.drop_index(op.f("ix_Bookings_datetime"), table_name="Bookings")
     op.drop_table("Bookings")
     booking_status_enum.drop(op.get_bind(), checkfirst=True)
