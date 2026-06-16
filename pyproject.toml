@@ -14,6 +14,14 @@ dependencies = [
     "uvicorn>=0.49.0",
 ]
 
+[dependency-groups]
+dev = [
+    "aiosqlite>=0.21.0",
+    "greenlet>=3.2.0",
+    "httpx>=0.28.1",
+    "pytest>=8.4.0",
+    "pytest-asyncio>=1.0.0",
+]
 
 [tool.ruff]
 target-version = "py312"
@@ -55,6 +63,7 @@ fixable = ["I"]
 
 [tool.ruff.lint.per-file-ignores]
 "test_*.py" = ["S101", "S106"]
+"tests/**/*.py" = ["S101", "S106", "DTZ001"]
 
 [tool.ruff.format]
 quote-style = "double"
