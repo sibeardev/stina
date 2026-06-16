@@ -1,8 +1,10 @@
 from uuid import UUID
 
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Booking
+from app.domain import BookingStatus
 from app.schemas import BookingCreateRequest
 
 
@@ -20,3 +22,27 @@ class BookingRepository:
         await self.db.refresh(booking)
 
         return booking
+
+    async def list_bookings(
+        self,
+        *,
+        status: BookingStatus | None = None,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> tuple[list[Booking], int]:
+        filters = []
+        if status is not None:
+            filters.append(Booking.status == status)
+
+        count_stmt = select(func.count()).select_from(Booking).where(*filters)
+        total = int(await self.db.scalar(count_stmt) or 0)
+
+        stmt = (
+            select(Booking)
+            .where(*filters)
+            .order_by(Booking.created_at.desc())
+            .offset(offset)
+            .limit(limit)
+        )
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all()), total

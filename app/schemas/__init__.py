@@ -1,6 +1,7 @@
-from app.schemas.booking import BookingCreateRequest, BookingResponse
+from app.schemas.booking import BookingCreateRequest, BookingListResponse, BookingResponse
 
 __all__ = [
     "BookingCreateRequest",
+    "BookingListResponse",
     "BookingResponse",
 ]

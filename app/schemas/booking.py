@@ -34,3 +34,10 @@ class BookingResponse(BaseModel):
     service_type: str
     status: BookingStatus
     created_at: datetime
+
+
+class BookingListResponse(BaseModel):
+    items: list[BookingResponse]
+    total: int = Field(ge=0)
+    offset: int = Field(ge=0)
+    limit: int = Field(ge=1)
