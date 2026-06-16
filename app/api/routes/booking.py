@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Query, status
+from uuid import UUID
+
+from fastapi import APIRouter, HTTPException, Query, status
 
 from app.api.deps import BookingServiceDep
 from app.domain import BookingStatus
@@ -28,3 +30,17 @@ async def list_bookings(
     limit: int = Query(20, ge=1, le=100),
 ) -> BookingListResponse:
     return await service.list_bookings(status=status, offset=offset, limit=limit)
+
+
+@router.get("/{booking_id}", response_model=BookingStatus)
+async def get_booking_status(
+    booking_id: UUID,
+    service: BookingServiceDep,
+) -> BookingStatus:
+    booking_status = await service.get_booking_status(booking_id)
+    if not booking_status:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found",
+        )
+    return booking_status

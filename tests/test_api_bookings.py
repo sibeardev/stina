@@ -60,6 +60,30 @@ class TestCreateBooking:
         assert response.status_code == 422
 
 
+class TestGetBooking:
+    async def test_get_booking_returns_status(
+        self,
+        client: AsyncClient,
+        created_booking: dict,
+    ) -> None:
+        response = await client.get(f"/bookings/{created_booking['id']}")
+
+        assert response.status_code == 200
+        assert response.json() == created_booking["status"]
+
+    async def test_get_booking_not_found(self, client: AsyncClient) -> None:
+        response = await client.get(
+            "/bookings/00000000-0000-0000-0000-000000000000",
+        )
+
+        assert response.status_code == 404
+
+    async def test_get_booking_rejects_invalid_id(self, client: AsyncClient) -> None:
+        response = await client.get("/bookings/not-a-uuid")
+
+        assert response.status_code == 422
+
+
 class TestListBookings:
     async def test_list_bookings_empty(self, client: AsyncClient) -> None:
         response = await client.get("/bookings")

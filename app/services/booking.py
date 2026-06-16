@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Booking
@@ -13,6 +15,11 @@ class BookingService:
 
     async def create(self, payload: BookingCreateRequest) -> Booking:
         return await self._repository.create(payload)
+
+    async def get_booking_status(self, booking_id: UUID) -> BookingStatus | None:
+        booking = await self._repository.get_by_id(booking_id)
+        if booking:
+            return booking.status
 
     async def list_bookings(
         self,
