@@ -1,0 +1,65 @@
+[project]
+name = "stina"
+version = "0.1.0"
+description = "Backend service for making appointments"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
+
+
+[tool.ruff]
+target-version = "py312"
+line-length = 90
+indent-width = 4
+src = ["app"]
+
+[tool.ruff.lint]
+preview = true
+select = [
+    "UP",
+    "I",
+    "E",
+    "W",
+    "F",
+    "B",
+    "C4",
+    "S",
+    "BLE",
+    "T20",
+    "T10",
+    "PT",
+    "RUF",
+    "DTZ",
+    "ERA",
+    "FURB",
+]
+ignore = [
+    "C408",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "S110",
+    "BLE001",
+]
+exclude = [
+]
+fixable = ["I"]
+
+[tool.ruff.lint.per-file-ignores]
+"test_*.py" = ["S101", "S106"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.flake8-bandit]
+check-typed-exception = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+force-sort-within-sections = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["tests"]
