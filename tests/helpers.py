@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Booking
-from app.domain import BookingStatus
+from app.domain.enums import BookingStatus
 
 
 async def set_booking_status(

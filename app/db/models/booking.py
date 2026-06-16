@@ -5,7 +5,7 @@ from sqlalchemy import DateTime, Enum, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
-from app.domain import BookingStatus
+from app.domain.enums import BookingStatus
 
 
 class Booking(Base):

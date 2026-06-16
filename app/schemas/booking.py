@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.domain import BookingStatus
+from app.domain.enums import BookingStatus
 
 
 class BookingCreateRequest(BaseModel):
