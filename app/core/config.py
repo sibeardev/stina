@@ -16,16 +16,23 @@ class Settings(BaseSettings):
     postgres_host: str = "db"
     postgres_port: int = 5432
 
-    @property
-    def database_url(self) -> PostgresDsn:
+    def _build_postgres_url(self, driver: str) -> PostgresDsn:
         return PostgresDsn.build(
-            scheme="postgresql+asyncpg",
+            scheme=f"postgresql+{driver}",
             username=self.postgres_user,
             password=self.postgres_password,
             host=self.postgres_host,
             port=self.postgres_port,
             path=self.postgres_db,
         )
+
+    @property
+    def database_url(self) -> PostgresDsn:
+        return self._build_postgres_url("asyncpg")
+
+    @property
+    def sync_database_url(self) -> PostgresDsn:
+        return self._build_postgres_url("psycopg")
 
 
 settings = Settings()
