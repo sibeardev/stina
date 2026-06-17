@@ -32,9 +32,5 @@ class Settings(BaseSettings):
     def database_url(self) -> PostgresDsn:
         return self._build_postgres_url("asyncpg")
 
-    @property
-    def sync_database_url(self) -> PostgresDsn:
-        return self._build_postgres_url("psycopg")
-
 
 settings = Settings()
