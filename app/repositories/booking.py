@@ -15,6 +15,11 @@ class BookingRepository:
     async def get_by_id(self, booking_id: UUID) -> Booking | None:
         return await self.db.get(Booking, booking_id)
 
+    async def get_by_id_for_update(self, booking_id: UUID) -> Booking | None:
+        stmt = select(Booking).where(Booking.id == booking_id).with_for_update()
+        result = await self.db.execute(stmt)
+        return result.scalar_one_or_none()
+
     async def create(self, booking: BookingCreateRequest) -> Booking:
         booking = Booking(**booking.model_dump())
         self.db.add(booking)
@@ -49,6 +54,12 @@ class BookingRepository:
 
     async def cancel(self, booking: Booking) -> Booking:
         booking.status = BookingStatus.CANCELLED
+        await self.db.flush()
+        await self.db.refresh(booking)
+        return booking
+
+    async def update_status(self, booking: Booking, status: BookingStatus) -> Booking:
+        booking.status = status
         await self.db.flush()
         await self.db.refresh(booking)
         return booking
