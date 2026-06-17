@@ -1,4 +1,4 @@
-from pydantic import PostgresDsn
+from pydantic import PostgresDsn, RedisDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     postgres_password: str
     postgres_host: str = "db"
     postgres_port: int = 5432
+
+    redis_url: RedisDsn
 
     def _build_postgres_url(self, driver: str) -> PostgresDsn:
         return PostgresDsn.build(
