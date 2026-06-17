@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Query, status
 from app.api.deps import BookingServiceDep
 from app.domain.enums import BookingStatus
 from app.schemas import BookingCreateRequest, BookingListResponse, BookingResponse
+from app.worker.tasks import confirm_booking_task
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 
@@ -19,6 +20,7 @@ async def create_booking(
     service: BookingServiceDep,
 ) -> BookingResponse:
     booking = await service.create(payload)
+    await confirm_booking_task.kiq(str(booking.id))
     return BookingResponse.model_validate(booking)
 
 
