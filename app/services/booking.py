@@ -43,14 +43,14 @@ class BookingService:
             raise ValueError("Booking is not pending")
         return await self._repository.update_status(booking, BookingStatus.CANCELLED)
 
-    async def list_bookings(
+    async def get_booking_list(
         self,
         *,
         status: BookingStatus | None = None,
         offset: int = 0,
         limit: int = 20,
     ) -> BookingListResponse:
-        bookings, total = await self._repository.list_bookings(
+        bookings, total = await self._repository.get_booking_list(
             status=status,
             offset=offset,
             limit=limit,

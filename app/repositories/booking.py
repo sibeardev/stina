@@ -28,7 +28,7 @@ class BookingRepository:
 
         return booking
 
-    async def list_bookings(
+    async def get_booking_list(
         self,
         *,
         status: BookingStatus | None = None,

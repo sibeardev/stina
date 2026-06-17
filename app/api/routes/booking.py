@@ -31,7 +31,7 @@ async def list_bookings(
     offset: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
 ) -> BookingListResponse:
-    return await service.list_bookings(status=status, offset=offset, limit=limit)
+    return await service.get_booking_list(status=status, offset=offset, limit=limit)
 
 
 @router.get("/{booking_id}", response_model=BookingStatus)
