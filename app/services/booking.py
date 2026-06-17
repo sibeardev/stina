@@ -35,13 +35,13 @@ class BookingService:
         if booking:
             return booking.status
 
-    async def cancel_booking(self, booking_id: UUID) -> Booking:
-        booking = await self._repository.get_by_id(booking_id)
+    async def cancel(self, booking_id: UUID) -> Booking:
+        booking = await self._repository.get_by_id_for_update(booking_id)
         if not booking:
             raise ValueError("Booking not found")
         if booking.status != BookingStatus.PENDING:
             raise ValueError("Booking is not pending")
-        return await self._repository.cancel(booking)
+        return await self._repository.update_status(booking, BookingStatus.CANCELLED)
 
     async def list_bookings(
         self,

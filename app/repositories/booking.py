@@ -52,12 +52,6 @@ class BookingRepository:
         result = await self.db.execute(stmt)
         return list(result.scalars().all()), total
 
-    async def cancel(self, booking: Booking) -> Booking:
-        booking.status = BookingStatus.CANCELLED
-        await self.db.flush()
-        await self.db.refresh(booking)
-        return booking
-
     async def update_status(self, booking: Booking, status: BookingStatus) -> Booking:
         booking.status = status
         await self.db.flush()

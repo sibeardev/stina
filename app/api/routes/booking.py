@@ -54,7 +54,7 @@ async def cancel_booking(
     service: BookingServiceDep,
 ) -> BookingResponse:
     try:
-        booking = await service.cancel_booking(booking_id)
+        booking = await service.cancel(booking_id)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
