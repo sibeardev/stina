@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from unittest.mock import AsyncMock
 
 from httpx import AsyncClient
 import pytest
@@ -13,6 +14,7 @@ class TestCreateBooking:
         self,
         client: AsyncClient,
         booking_payload: dict[str, str],
+        mock_confirm_booking_task: AsyncMock,
     ) -> None:
         response = await client.post("/bookings", json=booking_payload)
 
@@ -23,6 +25,7 @@ class TestCreateBooking:
         assert data["status"] == BookingStatus.PENDING.value
         assert data["id"]
         assert data["created_at"]
+        mock_confirm_booking_task.assert_awaited_once_with(data["id"])
 
     async def test_create_booking_rejects_empty_name(
         self,

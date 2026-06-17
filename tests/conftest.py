@@ -1,11 +1,12 @@
+from collections.abc import AsyncIterator
+from datetime import UTC, datetime, timedelta
 import os
+from unittest.mock import AsyncMock, patch
 
 os.environ.setdefault("POSTGRES_DB", "test")
 os.environ.setdefault("POSTGRES_USER", "test")
 os.environ.setdefault("POSTGRES_PASSWORD", "test")
-
-from collections.abc import AsyncIterator
-from datetime import UTC, datetime, timedelta
+os.environ.setdefault("REDIS_URL", "redis://localhost:6379/0")
 
 from httpx import ASGITransport, AsyncClient
 import pytest
@@ -17,6 +18,15 @@ from app.db.base import Base
 from app.main import app
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
+
+@pytest.fixture(autouse=True)
+def mock_confirm_booking_task() -> AsyncIterator[AsyncMock]:
+    with patch(
+        "app.worker.tasks.confirm_booking_task.kiq",
+        new_callable=AsyncMock,
+    ) as mock_kiq:
+        yield mock_kiq
 
 
 @pytest.fixture
