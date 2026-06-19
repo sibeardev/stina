@@ -7,6 +7,7 @@ os.environ.setdefault("POSTGRES_DB", "test")
 os.environ.setdefault("POSTGRES_USER", "test")
 os.environ.setdefault("POSTGRES_PASSWORD", "test")
 os.environ.setdefault("REDIS_URL", "redis://localhost:6379/0")
+os.environ.setdefault("AUTO_MIGRATE", "false")
 
 from httpx import ASGITransport, AsyncClient
 import pytest

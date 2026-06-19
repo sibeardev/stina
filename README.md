@@ -56,7 +56,9 @@ docker compose up --build
 
 ### 3. Миграции
 
-После первого запуска (или при изменении схемы):
+При старте API автоматически выполняется `alembic upgrade head` (с повторными попытками, пока Postgres не готов).
+
+Ручной запуск при необходимости:
 
 ```bash
 docker compose exec api uv run alembic upgrade head

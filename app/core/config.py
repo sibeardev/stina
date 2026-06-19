@@ -9,6 +9,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     debug: bool = True
+    auto_migrate: bool = True
 
     postgres_db: str
     postgres_user: str
